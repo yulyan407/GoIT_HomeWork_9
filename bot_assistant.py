@@ -40,11 +40,8 @@ def add_contact(name, phone):
            phone -> str
     :return str
     """
-    if name in CONTACTS_DICT.keys():
-        return f'The contact with {name} is already in contacts, please add the phone with new name'
-    else:
-        CONTACTS_DICT[name] = phone
-        return f'Contact {name}: {phone} successfully added'
+    CONTACTS_DICT[name] = phone
+    return f'Contact {name}: {phone} successfully added'
 
 @input_error
 def change_contact(name, phone):
@@ -54,11 +51,8 @@ def change_contact(name, phone):
            phone -> str
     :return str
     """
-    if name not in CONTACTS_DICT.keys():
-        return f'The {name} is not in contacts, please add the phone with command "add"'
-    else:
-        CONTACTS_DICT.update({name: phone})
-        return f'Contact {name}: {phone} successfully changed'
+    CONTACTS_DICT.update({name: phone})
+    return f'Contact {name}: {phone} successfully changed'
 
 @input_error
 def get_phone(name):
@@ -70,26 +64,47 @@ def get_phone(name):
     phone = CONTACTS_DICT[name]
     return f'For {name} the phone is {phone}'
 
+def show_all():
+    """
+    This function returns all contact from the CONTACTS_DICT
+    :param: None
+    :return: phone_book -> str
+    """
+    phone_book = ''
+    for name, contact in CONTACTS_DICT.items():
+        phone_book += f'{name} : {contact}\n'
+    return phone_book
+
+def greeting():
+    return 'How can I help you?'
+
+def end():
+    return 'Good bye!'
+
 def main():
     """
     This function implements all the logic of interaction with the user, all 'print' and 'input' takes place here
     :param: None
     :return: None
     """
-    handler_commands = {'add': add_contact,
+    handler_commands = {'hello': greeting,
+                        'hi': greeting,
+                        'add': add_contact,
                         'change': change_contact,
-                        'phone': get_phone}
+                        'phone': get_phone,
+                        'show all': show_all,
+                        '.': end,
+                        'good bye': end,
+                        'close': end,
+                        'exit': end}
 
     while True:
         user_input = input('>>>:')
-        if user_input.lower() in ('.', 'good bye', 'close', 'exit'):
-            print('Good bye!')
-            sys.exit()
-        elif user_input.lower() in ('hello', 'hi'):
-            print('How can I help you?')
-        elif user_input.lower() == 'show all':
-            for name, contact in CONTACTS_DICT.items():
-                print(f'{name}: {contact}')
+        if user_input.lower() in handler_commands.keys():
+            output = handler_commands[user_input.lower()]()
+            print(output)
+            if output == 'Good bye!':
+                sys.exit()
         else:
             command, args = parse(user_input.lower())
             if command in handler_commands.keys():
@@ -97,7 +112,7 @@ def main():
             else:
                 print(
                     "You entered an invalid command, please enter one of the next commands: "
-                    " 'hello', 'hi', 'show all', 'add', 'change', 'phone', '.', 'good bye', 'close', 'exit'")
+                    "'hello', 'hi', 'show all', 'add', 'change', 'phone', '.', 'good bye', 'close', 'exit'")
 
 
 if __name__ == '__main__':
